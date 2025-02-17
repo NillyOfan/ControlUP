@@ -1,0 +1,16 @@
+# requirements.txt
+# Core testing libraries
+pytest
+
+# Selenium WebDriver for browser automation
+selenium
+webdriver-manager  # Automatically manages WebDriver binaries
+
+# Logging & Reporting
+allure-pytest  # Allure reporting integration
+
+# API Testing
+requests  # For API requests
+
+# Configuration handling
+pyyaml  # For parsing config.yaml
