@@ -2,8 +2,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
-from utilities.logger import logger
+import logging
 
+logger = logging.getLogger(__name__)
 
 class BasePage:
     """A base class for all pages, containing common web interactions."""
@@ -15,14 +16,14 @@ class BasePage:
 
     def open_url(self):
         """Opens the given URL."""
-        logger.info(f"Opening URL: {self.url}")
+        logger.debug(f"Opening URL: {self.url}")
         self.driver.get(self.url)
 
     def find_element(self, by, locator):
         """Finds a single element on the page."""
         try:
             element = self.wait.until(EC.presence_of_element_located((by, locator)))
-            logger.info(f"Element found: {locator}")
+            logger.debug(f"Element found: {locator}")
             return element
         except TimeoutException:
             logger.error(f"Timeout: Element not found: {locator}")
@@ -32,7 +33,7 @@ class BasePage:
         """Finds multiple elements on the page."""
         try:
             elements = self.wait.until(EC.presence_of_all_elements_located((by, locator)))
-            logger.info(f"Elements found: {locator}")
+            logger.debug(f"Elements found: {locator}")
             return elements
         except TimeoutException:
             logger.error(f"Timeout: Elements not found: {locator}")
@@ -43,7 +44,7 @@ class BasePage:
         element = self.find_element(by, locator)
         if element:
             element.click()
-            logger.info(f"Clicked element: {locator}")
+            logger.debug(f"Clicked element: {locator}")
 
     def enter_text(self, by, locator, text):
         """Enters text into an input field."""
@@ -51,7 +52,7 @@ class BasePage:
         if element:
             element.clear()
             element.send_keys(text)
-            logger.info(f"Entered text '{text}' into element: {locator}")
+            logger.debug(f"Entered text '{text}' into element: {locator}")
 
     def get_element_text(self, by, locator):
         """Gets text from an element."""

@@ -16,7 +16,6 @@ def store_page(driver):
 
 def test_inventory_items_count(store_page):
     """Scenario: Verify Inventory Items"""
-
     logger.info("Retrieving inventory items")
     inventory_items = store_page.get_inventory_items()
 

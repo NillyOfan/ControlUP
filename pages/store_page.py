@@ -1,6 +1,8 @@
 from selenium.webdriver.common.by import By
 from pages.base_page import BasePage
-from utilities.logger import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class StorePage(BasePage):
@@ -36,12 +38,12 @@ class StorePage(BasePage):
 
     def get_inventory_items(self):
         """Returns a list of inventory items."""
-        logger.info("Fetching inventory items...")
+        logger.debug("Fetching inventory items...")
         return self.find_elements(*self.locators["inventory_item"])
 
     def add_first_item_to_cart(self):
         """Adds the first inventory item to the cart."""
-        logger.info("Adding first item to cart...")
+        logger.debug("Adding first item to cart...")
         self.click_element(*self.locators["add_to_cart_button"])
 
     def get_cart_count(self):

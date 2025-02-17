@@ -1,31 +1,46 @@
 import requests
 import yaml
 import os
-from utilities.logger import logger
+import logging
+from urllib.parse import urlparse
+from tests.conftest import config
 
+logger = logging.getLogger(__name__)
 
-# Get the absolute path to the config file
-config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "config", "config.yaml")
-config_path = os.path.abspath(config_path)  # Ensures absolute path
-
-if not os.path.exists(config_path):
-    raise FileNotFoundError(f"Configuration file not found: {config_path}")
-
-# Load configuration
-with open(config_path, "r") as file:
-    config = yaml.safe_load(file)
 
 class APIClient:
     """A generic API client to interact with REST APIs."""
 
-    # Example usage in tests:
-    # api_client = APIClient()
-    # response = api_client.get("/api/airports")
-
     def __init__(self, base_url=None):
-        """Initialize the API client with a base URL."""
+        """Initialize the API client with a base URL and verify its reachability."""
         self.base_url = base_url or config["api"]["base_url"]
         self.session = requests.Session()
+
+        logging.debug(f"APIClient initialized with base URL: {self.base_url}")
+
+    @staticmethod
+    def _is_valid_url(url):
+        """Check if the URL is valid (basic format validation)."""
+        parsed = urlparse(url)
+        return bool(parsed.scheme and parsed.netloc)
+
+    def _is_url_reachable(self, url, timeout=5):
+        """Check if the given API URL is reachable with retries."""
+        try:
+            response = self.session.get(url, timeout=timeout)
+            response.raise_for_status()  # Raises an error for 4xx and 5xx responses
+            return True
+
+        except requests.exceptions.ConnectionError as e:
+            logging.error(f"DNS resolution failed or server unreachable: {e}")
+        except requests.exceptions.Timeout:
+            logging.error(f"Timeout reached when connecting to: {url}")
+        except requests.exceptions.HTTPError as e:
+            logging.error(f"HTTP Error {e.response.status_code}: {e}")
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Unexpected error: {e}")
+
+        return False  # Return False if the API is unreachable
 
     def get(self, endpoint, params=None, headers=None):
         """Send a GET request and return the response."""
@@ -49,10 +64,20 @@ class APIClient:
 
 
 class AirportGapClient(APIClient):
-    """Specialized API client for Airport."""
+    """Specialized API client for AirportGapClient."""
 
-    def __init__(self):
-        super().__init__(base_url=config["api"]["base_url"])  # Uses the generic APIClient
+    def __init__(self, base_url=None):
+        """Initialize the AirportGap client and verify the /airports endpoint exists."""
+        super().__init__(base_url)  # Validate the base URL first
+
+        if not self._is_valid_url(self.base_url):
+            raise ValueError(f"Invalid URL provided: {self.base_url}")
+
+        test_url = f"{self.base_url}/airports"
+        if not self._is_url_reachable(test_url):
+            raise ConnectionError(f"AirportGap API is unreachable at: {test_url}")
+
+        logging.debug(f"AirportGapClient initialized with base URL: {self.base_url}")
 
     def get_airports(self):
         """Fetch the list of airports."""

@@ -1,71 +1,49 @@
 import pytest
 import allure
 import os
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 import logging
 import yaml
 import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
-# Get the absolute path of the project root (assuming conftest.py is inside tests/)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print(f"PROJECT_ROOT: {PROJECT_ROOT}")  # Debugging: Print log path
 CONFIG_PATH = os.path.join(PROJECT_ROOT, "config", "config.yaml")
-print(f"CONFIG_PATH: {CONFIG_PATH}")  # Debugging: Print log path
 
-# Verify the path before trying to open it
-if not os.path.exists(CONFIG_PATH):
+if not os.path.isfile(CONFIG_PATH):
     raise FileNotFoundError(f"Config file not found: {CONFIG_PATH}")
 
-# Load config
 with open(CONFIG_PATH, "r") as file:
     config = yaml.safe_load(file)
 
-# Generate a unique log filename for each test session
-log_filename = f"logs/test_execution_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
-print(f"log_filename: {log_filename}")  # Debugging: Print log path
-LOG_FILE_PATH = config["logging"].get("file", log_filename)  # Use config.yaml if exists, else use new filename
-print(f"LOG_FILE_PATH: {LOG_FILE_PATH}")  # Debugging: Print log path
+LOGS_DIR = os.path.join(PROJECT_ROOT, "logs")
+os.makedirs(LOGS_DIR, exist_ok=True)
+
+log_filename = config["logging"].get("file") or f"test_execution_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+LOG_FILE_PATH = os.path.join(LOGS_DIR, log_filename)
+
 
 def setup_logger():
-    """Set up centralized logging once per test session."""
-    log_formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(name)s - %(message)s")
+    # """Set up centralized logging once per test session."""
 
-    # Get root logger
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)  # Set log level (DEBUG, INFO, WARNING, etc.)
+    logging.basicConfig(
+        level=logging.getLevelName(config["logging"].get("level", "INFO").upper()),
+        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        handlers=[
+            logging.FileHandler(LOG_FILE_PATH),
+            logging.StreamHandler()
+        ]
+    )
 
-    # Ensure logs directory exists
-    os.makedirs(os.path.dirname(LOG_FILE_PATH), exist_ok=True)
+    return logging.getLogger()
 
-    # Remove existing handlers to prevent duplicate logs
-    if logger.hasHandlers():
-        logger.handlers.clear()
 
-    # File Handler
-    file_handler = logging.FileHandler(LOG_FILE_PATH)
-    file_handler.setFormatter(log_formatter)
-    logger.addHandler(file_handler)
-
-    # Console Handler (optional)
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(log_formatter)
-    logger.addHandler(console_handler)
-
-    return logger  # Return the logger instance
 @pytest.hookimpl(tryfirst=True)
 def pytest_configure(config):
     """Ensure logging is set up when pytest starts."""
     global logger  # Make logger accessible globally
-    logger = setup_logger()
-
-
-@pytest.fixture(scope="session", autouse=True)
-def initialize_logging():
-    """Automatically initialize logging for all test sessions."""
-    global logger
     logger = setup_logger()
 
 
@@ -93,7 +71,7 @@ def pytest_runtest_teardown(item):
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_makereport(item, call):
     """Hook: Captures test results and logs to Allure & Pytest report."""
-    report_dir = "reports"
+    report_dir = os.path.join(PROJECT_ROOT,"reports")
     os.makedirs(report_dir, exist_ok=True)  # Ensure 'reports' directory exists
 
     if call.when == "call":

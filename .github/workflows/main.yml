@@ -1,3 +1,4 @@
+touch .github/workflows/pytest.yml
 name: Run Pytest
 
 on: [push, pull_request]
