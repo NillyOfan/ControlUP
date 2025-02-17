@@ -94,7 +94,7 @@ This project includes a **GitHub Actions workflow** that automatically runs test
 ### 📌 Trigger Options
 - `push`
 - `pull_request`
-- `workflow_dispatch`- [Press to run tests](https://github.com/NillyOfan/ControlUP/actions/workflows/pytest.yml)
+- `workflow_dispatch`- [Trigger Test Workflow page](https://github.com/NillyOfan/ControlUP/actions/workflows/pytest.yml)
 
 ---
 
