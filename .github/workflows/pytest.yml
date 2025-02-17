@@ -26,8 +26,4 @@ jobs:
       - name: Run tests
         run: pytest --tb=short -v
 
-      - name: Upload test logs
-        uses: actions/upload-artifact@v4
-        with:
-        name: test-logs
-        path: logs/*.log
+    
