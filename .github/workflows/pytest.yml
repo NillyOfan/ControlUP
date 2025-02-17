@@ -24,9 +24,16 @@ jobs:
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
       - name: Ensure logs directory exists
-        run: mkdir -p logs  # 🛠️ Ensure logs directory exists before running tests
+        run: mkdir -p logs
 
       - name: Run tests
         run: pytest --tb=short -v
+
+      - name: Upload all logs to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-test-logs
+          path: logs/  # Upload the entire logs folder
+          retention-days: 7
 
     
