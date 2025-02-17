@@ -33,7 +33,7 @@ This test suite consists of:
  ┣ 📂 logs          # Execution logs
  ┣ 📜 requirements.txt # Dependencies
  ┣ 📜 pytest.ini        # Pytest configurations
- ┣ 📜 README.md         # Project Documentation
+
 ```
 
 ---
