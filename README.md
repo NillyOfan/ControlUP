@@ -16,7 +16,6 @@ This test suite consists of:
 - **Testing Framework**: Pytest
 - **UI Automation**: Selenium WebDriver
 - **API Testing**: Requests Library
-- **Reporting**: Allure Reports
 - **CI/CD**: GitHub Actions
 
 ---
