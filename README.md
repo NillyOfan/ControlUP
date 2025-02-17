@@ -19,7 +19,6 @@ This test suite consists of:
 - **CI/CD**: GitHub Actions
 
 ---
----
 
 ## 📂 Project Structure
 ```
