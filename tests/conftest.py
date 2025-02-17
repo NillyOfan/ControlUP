@@ -7,6 +7,7 @@ import datetime
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import tempfile
 
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -46,12 +47,22 @@ def pytest_configure(config):
     global logger  # Make logger accessible globally
     logger = setup_logger()
 
+def get_chrome_driver():
+    """Returns a configured Chrome WebDriver instance."""
+    options = webdriver.ChromeOptions()
+    options.add_argument("--no-sandbox")
+    options.add_argument("--headless")  # Ensure it's running headless in CI/CD
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")  # Unique temp directory to prevent conflicts
+
+    service = Service(ChromeDriverManager().install())
+    return webdriver.Chrome(service=service, options=options)
 
 @pytest.fixture(scope="function")
 def driver():
     """Fixture to initialize and quit WebDriver."""
     logger.info("Initializing WebDriver")
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver = get_chrome_driver()
     driver.implicitly_wait(10)
     driver.maximize_window()
     yield driver
