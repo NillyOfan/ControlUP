@@ -11,5 +11,5 @@ api:
 
 logging:
 #  file: "log_file"
-  level: "INFO"  # Optional: set log level
+  level: "DEBUG"  # Optional: set log level
 

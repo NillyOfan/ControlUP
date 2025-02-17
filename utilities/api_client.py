@@ -1,6 +1,4 @@
 import requests
-import yaml
-import os
 import logging
 from urllib.parse import urlparse
 from tests.conftest import config
@@ -82,10 +80,10 @@ class AirportGapClient(APIClient):
     def get_airports(self):
         """Fetch the list of airports."""
         response = self.get("/airports")
-        return response.json()
+        return response.json(), response.status_code
 
     def calculate_distance(self, from_code, to_code):
         """Calculate the distance between two airports."""
         payload = {"from": from_code, "to": to_code}
         response = self.post("/airports/distance", json=payload)
-        return response.json()
+        return response.json(), response.status_code

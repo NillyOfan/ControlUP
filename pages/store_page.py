@@ -35,10 +35,11 @@ class StorePage(BasePage):
         self.enter_text(*self.locators["username_input"], username)
         self.enter_text(*self.locators["password_input"], password)
         self.click_element(*self.locators["login_button"])
+        #TODO better error handling for selenium login failures
 
     def get_inventory_items(self):
         """Returns a list of inventory items."""
-        logger.debug("Fetching inventory items...")
+        logger.debug("Get inventory items...")
         return self.find_elements(*self.locators["inventory_item"])
 
     def add_first_item_to_cart(self):

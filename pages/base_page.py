@@ -2,6 +2,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import WebDriverException
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,12 +13,15 @@ class BasePage:
     def __init__(self, driver, url):
         self.driver = driver
         self.url = url
-        self.wait = WebDriverWait(driver, 10)  # Default wait time of 10 seconds
+        self.wait = WebDriverWait(driver, 10)
 
     def open_url(self):
         """Opens the given URL."""
         logger.debug(f"Opening URL: {self.url}")
-        self.driver.get(self.url)
+        try:
+            self.driver.get(self.url)
+        except WebDriverException as e:
+            logger.error(f"Failed to open URL {self.url}: {str(e)}")
 
     def find_element(self, by, locator):
         """Finds a single element on the page."""
