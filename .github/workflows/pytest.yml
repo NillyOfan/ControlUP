@@ -1,6 +1,6 @@
 name: Run Pytest
 
-on: [push, pull_request,workflow_dispatch]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   test:
@@ -23,10 +23,10 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PWD" >> $GITHUB_ENV
 
+      - name: Ensure logs directory exists
+        run: mkdir -p logs  # 🛠️ Ensure logs directory exists before running tests
+
       - name: Run tests
         run: pytest --tb=short -v
-
-     - name: Ensure logs directory exists
-       run: mkdir -p logs
 
     
