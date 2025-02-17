@@ -24,16 +24,23 @@ This test suite consists of:
 ## 📂 Project Structure
 ```
 📦 project-root
- ┣ 📂 tests
- ┃ ┣ 📜 test_ui.py  # UI test cases
- ┃ ┣ 📜 test_api.py # API test cases
  ┣ 📂 config
- ┃ ┗ 📜 config.yaml # Configuration file
- ┣ 📂 reports       # Test reports and logs
- ┣ 📂 logs          # Execution logs
- ┣ 📜 requirements.txt # Dependencies
- ┣ 📜 pytest.ini        # Pytest configurations
-
+ ┃ ┗ 📜 config.yaml          # Configuration (e.g., base URLs, credentials)
+ ┣ 📂 utilities
+ ┃ ┣ 📜 logger.py            # Logging setup
+ ┃ ┣ 📜 api_client.py        # API helper functions
+ ┣ 📂 pages
+ ┃ ┣ 📜 base_page.py         # BasePage class (generic methods)
+ ┃ ┣ 📜 store_page.py        # StorePage class (specific UI interactions)
+ ┣ 📂 tests
+ ┃ ┣ 📜 test_store.py        # UI tests for the store
+ ┃ ┣ 📜 test_api.py          # API tests
+ ┃ ┣ 📜 conftest.py          # Common test setup (WebDriver, Hooks, Fixtures)
+ ┣ 📂 reports                # Test reports and logs
+ ┣ 📂 logs                   # Execution logs
+ ┣ 📜 requirements.txt       # Dependencies
+ ┣ 📜 pytest.ini             # Pytest configurations
+ ┣ 📜 .gitignore
 ```
 
 ---
