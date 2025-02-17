@@ -26,4 +26,7 @@ jobs:
       - name: Run tests
         run: pytest --tb=short -v
 
+     - name: Ensure logs directory exists
+       run: mkdir -p logs
+
     
