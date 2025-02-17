@@ -1,0 +1,15 @@
+store:
+  url: "https://www.saucedemo.com"
+  username: "standard_user"
+  password: "secret_sauce"
+
+api:
+  base_url: "https://airportgap.com/api"
+  endpoints:
+    airports: "/airports"
+    distance: "/airports/distance"
+
+logging:
+#  file: "log_file"
+  level: "INFO"  # Optional: set log level
+
